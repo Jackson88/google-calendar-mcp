@@ -1,6 +1,6 @@
 {
   "name": "google-calendar-mcp",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Google Calendar Model Context Protocol (MCP) server for Claude Desktop",
   "main": "dist/index.js",
   "bin": "./bin/run.js",
