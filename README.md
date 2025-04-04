@@ -219,20 +219,20 @@ Claude Desktop needs to be configured to recognize and access your MCP server:
 
 
    ```json
-{
-  "mcpServers": {
-    "google-calendar": {
-      "command": "npx",
-      "args": ["-y", "google-calendar-mcp"],
-      "env": {
-        "GOOGLE_CLIENT_ID": "<your-client-id>",
-        "GOOGLE_CLIENT_SECRET": "<your-client-secret>",
-        "GOOGLE_REDIRECT_URI": "http://localhost:3000/auth/callback"
-      },
-      "description": "Google Calendar MCP server using npx"
+    {
+      "mcpServers": {
+        "google-calendar": {
+          "command": "npx",
+          "args": ["-y", "google-calendar-mcp"],
+          "env": {
+            "GOOGLE_CLIENT_ID": "<your-client-id>",
+            "GOOGLE_CLIENT_SECRET": "<your-client-secret>",
+            "GOOGLE_REDIRECT_URI": "http://localhost:3000/auth/callback"
+          },
+          "description": "Google Calendar MCP server using npx"
+        }
+      }
     }
-  }
-}
    ```
 
 3. **Save the file and restart Claude Desktop**
