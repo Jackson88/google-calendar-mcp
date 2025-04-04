@@ -7,12 +7,13 @@ import { MCPRequest } from '../models/mcp';
 import mcpService from '../services/mcpService';
 import logger from '../utils/logger';
 import directAuthService from '../services/auth/directAuthService';
+import { DirectAuthCredentials } from '../models/auth';
 
 export class McpController {
   /**
    * Get server information
    */
-  public async getServerInfo(req: Request, res: Response): Promise<void> {
+  public async getServerInfo(_req: Request, res: Response): Promise<void> {
     try {
       const serverInfo = mcpService.getServerInfo();
       res.status(200).json(serverInfo);
@@ -49,7 +50,7 @@ export class McpController {
         res.status(200).json(response);
       } else {
         // Map error codes to HTTP status codes
-        let statusCode = 500;
+        let statusCode;
         
         switch (response.error?.code) {
           case 'BAD_REQUEST':
@@ -131,9 +132,9 @@ export class McpController {
    */
   public async handleDirectAuth(req: Request, res: Response): Promise<void> {
     try {
-      const { email, password, cookies } = req.body;
+      const credentials: DirectAuthCredentials = req.body;
       
-      if (!email && !cookies) {
+      if (!credentials.email && !credentials.cookies) {
         res.status(400).json({
           success: false,
           error: { message: 'Email or cookies are required for direct authentication' },
@@ -143,10 +144,13 @@ export class McpController {
       
       let success = false;
       
-      if (cookies) {
-        success = await directAuthService.authenticateWithCookies(cookies);
-      } else if (email && password) {
-        success = await directAuthService.authenticateWithCredentials(email, password);
+      if (credentials.cookies) {
+        success = await directAuthService.authenticateWithCookies(credentials.cookies);
+      } else if (credentials.email && credentials.password) {
+        success = await directAuthService.authenticateWithCredentials(
+          credentials.email,
+          credentials.password
+        );
       } else {
         res.status(400).json({
           success: false,

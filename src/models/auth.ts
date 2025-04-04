@@ -7,11 +7,6 @@ export enum AuthMethod {
   DIRECT = 'direct',              // Using direct user authentication
 }
 
-export interface AuthConfig {
-  method: AuthMethod;
-  enabled: boolean;
-}
-
 export interface DirectAuthCredentials {
   email: string;
   password?: string;  // Not recommended for production

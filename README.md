@@ -24,7 +24,7 @@ A TypeScript-based Model Context Protocol (MCP) server that allows Claude Deskto
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/google-calendar-mcp.git
+git clone https://github.com/Jackson88/google-calendar-mcp
 cd google-calendar-mcp
 ```
 
@@ -128,6 +128,166 @@ npm run start
 yarn start
 ```
 
+## Configuring Claude for MCP Integration
+
+### Important Note on Claude Compatibility
+
+**⚠️ Current Limitations**: As of April 2025, Claude Desktop may have limited or no support for MCP connections. Testing has shown that the current version of Claude Desktop does not connect to external MCP servers, regardless of the authentication method used. The instructions below are for future reference when/if Claude Desktop fully supports MCP server connections.
+
+If you receive an error message stating "I'm unable to connect to any external servers," this indicates that your version of Claude Desktop does not currently support external MCP connections. This is a limitation of the current Claude Desktop implementation, not an issue with this MCP server.
+
+### Prerequisites
+
+1. You must have Claude Desktop installed on your computer
+2. The Google Calendar MCP server must be running and accessible
+3. Your version of Claude Desktop must support MCP connections
+
+### Running the Server
+
+You need to manually start the MCP server **before** asking Claude to connect to it. Claude Desktop will not run the server for you using npx or any other command.
+
+Follow these steps to set up the integration:
+
+1. **Start the MCP server:**
+   ```bash
+   # Development mode
+   npm run dev
+   
+   # OR Production mode (after building)
+   npm run build
+   npm run start
+   ```
+
+2. **Authenticate with Google (first time only):**
+   - For Google Cloud OAuth: Visit http://localhost:3000/mcp/auth/url in your browser and complete the authorization flow
+   - For Direct Authentication: Use a tool like Postman or curl to send a POST request to http://localhost:3000/auth/direct with your credentials
+
+### Direct Authentication Methods
+
+This server supports two authentication methods with Google Calendar. Both can be used with the server API directly, even if Claude Desktop connection is not yet supported.
+
+#### 1. Google Cloud OAuth (Recommended)
+
+This is the more secure method using standard OAuth flow:
+
+1. Visit http://localhost:3000/mcp/auth/url in your browser
+2. Complete the Google authorization process
+3. You'll be redirected back to the callback URL
+
+#### 2. Direct Authentication
+
+For development/testing without setting up Google Cloud:
+
+```bash
+# Using curl
+curl -X POST http://localhost:3000/auth/direct \
+  -H "Content-Type: application/json" \
+  -d '{"email":"your.email@gmail.com","password":"your_password"}'  
+
+# Or with cookies
+curl -X POST http://localhost:3000/auth/direct \
+  -H "Content-Type: application/json" \
+  -d '{"cookies":"your_google_cookies"}'  
+```
+
+These methods allow you to test the server functionality directly, even if Claude Desktop connection is not yet supported.
+
+### Configuring Claude Desktop Settings
+
+Claude Desktop needs to be configured to recognize and access your MCP server. You have two options:
+
+#### Option 1: Using Claude Desktop Settings UI
+
+1. **Open Claude Desktop Settings:**
+   - Click on the settings gear icon in Claude Desktop
+   - Navigate to the "Extensions" or "MCP" section (depending on your version)
+
+2. **Add MCP Configuration:**
+   - Click "Add MCP Server"
+   - Enter the following information:
+     - **Name**: Google Calendar MCP (or any name you prefer)
+     - **URL**: http://localhost:3000/mcp
+     - **Description**: (Optional) Google Calendar integration for Claude
+   - Click "Save" or "Add"
+
+3. **Verify Configuration:**
+   - The MCP server should now appear in your list of available MCP servers
+   - Ensure the status shows as available (may require the server to be running)
+
+
+#### Option 2: Direct Settings File Configuration (Advanced)
+
+For advanced users who prefer to directly configure the Claude Desktop settings file:
+
+1. **Locate your Claude Desktop settings file:**
+   - On macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
+   - On Windows: `%APPDATA%\Claude\claude_desktop_config.json`
+
+2. **Add the MCP server configuration to the settings file:**
+   - Open the settings.json file in a text editor
+   - Find or create the `mcpServers` section
+   - Add the following configuration (adjust as needed):
+
+   ```json
+   "mcpServers": {
+     "google-calendar-mcp": {
+       "url": "http://localhost:3000/mcp",
+       "description": "Google Calendar Integration for Claude"
+     }
+   }
+   ```
+
+3. **Save the file and restart Claude Desktop**
+
+Note: This method requires manual editing of configuration files and should be used with caution. Always backup the settings file before making changes.
+
+### Verifying the Connection
+
+- Ask Claude a simple calendar-related question like "What events do I have today?"
+- If it responds with your calendar information, the connection is working
+
+### Troubleshooting Claude Connection
+
+If Claude cannot connect to your MCP server:
+
+1. **Check Claude's response:** Claude will typically tell you if there's a problem with the connection
+
+2. **Verify the server URL:** Make sure you've specified the correct URL including the /mcp path
+
+3. **Check server logs:** Look at the console where your MCP server is running for any error messages
+
+4. **Restart both applications:** Sometimes restarting both Claude Desktop and the MCP server can resolve connection issues
+
+5. **Authentication status:** Ensure you've successfully authenticated with Google before trying to use the connection
+
+6. **Contact Anthropic Support:** If you receive a message that Claude cannot connect to external servers, you may need to contact Anthropic support about MCP feature availability for your version of Claude Desktop
+
+### Claude Commands Reference
+
+Once connected, you can ask Claude to perform various calendar operations:
+
+```
+# View your schedule
+What events do I have today?
+What's on my calendar for next week?
+Show me my meetings for tomorrow afternoon.
+
+# Create events
+Schedule a team meeting next Monday at 10 AM for 1 hour.
+Add a doctor's appointment on Friday at 2 PM.
+Create a recurring weekly check-in every Wednesday at 9 AM.
+
+# Modify events
+Reschedule my 3 PM meeting to 4 PM.
+Move tomorrow's lunch meeting to Thursday.
+Cancel my dentist appointment.
+
+# Find available times
+When am I free tomorrow for a 2-hour meeting?
+Do I have any conflicts next Tuesday morning?
+Find me an open 30-minute slot this week for a quick call.
+```
+
 ## Testing
 
 ```bash
@@ -169,17 +329,7 @@ The server exposes the following MCP endpoints:
 
 Here are some examples of how to use this MCP server with Claude Desktop:
 
-### 1. Authentication
-
-When connecting Claude Desktop to this MCP server for the first time, you need to authenticate with Google:
-
-```
-Claude, connect to my Google Calendar using the MCP server at http://localhost:3000/mcp.
-```
-
-Claude will provide a link to authorize access to your Google Calendar.
-
-### 2. Getting upcoming events
+### 1. Getting upcoming events
 
 ```
 Claude, what are my upcoming calendar events for the next week?
@@ -187,7 +337,7 @@ Claude, what are my upcoming calendar events for the next week?
 
 Claude will query the MCP server and return a list of your upcoming events.
 
-### 3. Creating a new event
+### 2. Creating a new event
 
 ```
 Claude, please schedule a meeting with John Doe about the project proposal for tomorrow at 2:00 PM, lasting for 1 hour.
@@ -195,7 +345,7 @@ Claude, please schedule a meeting with John Doe about the project proposal for t
 
 Claude will create a new calendar event based on your request.
 
-### 4. Finding conflicts in your schedule
+### 3. Finding conflicts in your schedule
 
 ```
 Claude, do I have any scheduling conflicts next Monday between 10 AM and 3 PM?
@@ -203,7 +353,7 @@ Claude, do I have any scheduling conflicts next Monday between 10 AM and 3 PM?
 
 Claude will check your calendar for that time period and inform you of any existing events.
 
-### 5. Rescheduling an event
+### 4. Rescheduling an event
 
 ```
 Claude, I need to reschedule my doctor's appointment on Thursday to Friday at the same time.
@@ -211,7 +361,7 @@ Claude, I need to reschedule my doctor's appointment on Thursday to Friday at th
 
 Claude will locate the event and update it with the new date.
 
-### 6. Setting up a recurring meeting
+### 5. Setting up a recurring meeting
 
 ```
 Claude, please create a weekly team standup meeting every Monday at 9:00 AM starting next week.
@@ -219,7 +369,7 @@ Claude, please create a weekly team standup meeting every Monday at 9:00 AM star
 
 Claude will create a recurring calendar event.
 
-### 7. Finding free time slots
+### 6. Finding free time slots
 
 ```
 Claude, when am I free for a 2-hour meeting with the design team this week?

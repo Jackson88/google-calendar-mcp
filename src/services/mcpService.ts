@@ -231,23 +231,23 @@ export class McpService {
 
       switch (request.endpoint) {
         case '/auth/url':
-          return this.handleGetAuthUrl() as MCPResponse<T>;
+          return await this.handleGetAuthUrl() as MCPResponse<T>;
         case '/auth/callback':
-          return this.handleAuthCallback(request) as MCPResponse<T>;
+          return await this.handleAuthCallback(request) as MCPResponse<T>;
         case '/calendars':
-          return this.handleGetCalendars() as MCPResponse<T>;
+          return await this.handleGetCalendars() as MCPResponse<T>;
         case '/events':
-          return this.handleGetEvents(request) as MCPResponse<T>;
+          return await this.handleGetEvents(request) as MCPResponse<T>;
         case '/events/upcoming':
-          return this.handleGetUpcomingEvents(request) as MCPResponse<T>;
+          return await this.handleGetUpcomingEvents(request) as MCPResponse<T>;
         case '/events/create':
-          return this.handleCreateEvent(request) as MCPResponse<T>;
+          return await this.handleCreateEvent(request) as MCPResponse<T>;
         case '/events/update':
-          return this.handleUpdateEvent(request) as MCPResponse<T>;
+          return await this.handleUpdateEvent(request) as MCPResponse<T>;
         case '/events/delete':
-          return this.handleDeleteEvent(request) as MCPResponse<T>;
+          return await this.handleDeleteEvent(request) as MCPResponse<T>;
         case '/events/detail':
-          return this.handleGetEventDetail(request) as MCPResponse<T>;
+          return await this.handleGetEventDetail(request) as MCPResponse<T>;
         default:
           return {
             success: false,

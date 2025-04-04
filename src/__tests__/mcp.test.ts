@@ -1,6 +1,3 @@
-import { McpService } from '../services/mcpService';
-import { env } from '../config/environment';
-
 // Mock environment
 jest.mock('../config/environment', () => ({
   env: {

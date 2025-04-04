@@ -20,10 +20,10 @@ import {
 } from '../models/calendar';
 
 export class GoogleCalendarService {
-  private client: OAuth2Client;
-  private calendar: calendar_v3.Calendar;
+  private readonly client: OAuth2Client;
+  private readonly calendar: calendar_v3.Calendar;
   private static instance: GoogleCalendarService;
-  private tokenPath: string;
+  private readonly tokenPath: string;
 
   private constructor() {
     this.client = new OAuth2Client(

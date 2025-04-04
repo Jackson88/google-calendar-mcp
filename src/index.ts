@@ -63,6 +63,19 @@ const server = app.listen(env.port, () => {
   if (env.auth.method === AuthMethod.DIRECT) {
     logger.info('Using direct authentication method');
     logger.info('Direct authentication endpoint available at /auth/direct');
+    
+    // Check if already authenticated with direct method
+    AuthFactory.isAuthenticated()
+      .then((isAuth) => {
+        if (isAuth) {
+          logger.info('User is already authenticated with direct method');
+        } else {
+          logger.info('No authentication found. User needs to authenticate.');
+        }
+      })
+      .catch((error) => {
+        logger.error('Error checking authentication status', { error });
+      });
   } else {
     logger.info('Using Google Cloud OAuth authentication method');
     
@@ -71,24 +84,18 @@ const server = app.listen(env.port, () => {
       logger.warn('Google Cloud OAuth not fully configured. Check your environment variables.');
     }
     
-    // Try to load authentication tokens on startup
-    const authService = AuthFactory.getAuthService();
-    if (authService.loadTokens) {
-      authService
-        .loadTokens()
-        .then((loaded: boolean) => {
-          if (loaded) {
-            logger.info('Successfully loaded authentication tokens');
-          } else {
-            logger.info(
-              'No authentication tokens found. User needs to authenticate.'
-            );
-          }
-        })
-        .catch((error: Error) => {
-          logger.error('Error loading authentication tokens', { error });
-        });
-    }
+    // Check if already authenticated with Google
+    AuthFactory.isAuthenticated()
+      .then((isAuth) => {
+        if (isAuth) {
+          logger.info('User is already authenticated with Google');
+        } else {
+          logger.info('No authentication found. User needs to authenticate.');
+        }
+      })
+      .catch((error) => {
+        logger.error('Error checking authentication status', { error });
+      });
   }
 });
 
@@ -109,5 +116,3 @@ const shutdown = (): void => {
 
 process.on('SIGTERM', shutdown);
 process.on('SIGINT', shutdown);
-
-export default server;

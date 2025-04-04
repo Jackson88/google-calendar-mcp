@@ -3,14 +3,13 @@
  * rather than requiring a Google Cloud Project
  */
 
-import { google } from 'googleapis';
 import fs from 'fs/promises';
 import path from 'path';
 import logger from '../../utils/logger';
 
 export class DirectAuthService {
   private static instance: DirectAuthService;
-  private tokenPath: string;
+  private readonly tokenPath: string;
 
   private constructor() {
     this.tokenPath = path.join(process.cwd(), 'direct_auth_token.json');
@@ -31,7 +30,7 @@ export class DirectAuthService {
    */
   public async authenticateWithCredentials(
     email: string,
-    password: string
+    _password: string
   ): Promise<boolean> {
     try {
       // This is a simplified example. In practice, direct password auth
@@ -57,7 +56,7 @@ export class DirectAuthService {
    * Get an auth token using the user's sign-in cookies
    * This is a more realistic approach that doesn't require a Google Cloud Project
    */
-  public async authenticateWithCookies(cookies: string): Promise<boolean> {
+  public async authenticateWithCookies(_cookies: string): Promise<boolean> {
     try {
       logger.info('Attempting to authenticate using Google cookies');
       

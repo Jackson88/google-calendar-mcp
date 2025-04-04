@@ -38,6 +38,24 @@ export class AuthFactory {
       env.google.redirectUri
     );
   }
-}
 
-export default AuthFactory;
+  /**
+   * Check if the user is already authenticated based on the current method
+   */
+  public static async isAuthenticated(): Promise<boolean> {
+    const authMethod = env.auth.method as AuthMethod;
+    const authService = AuthFactory.getAuthService();
+    
+    if (authMethod === AuthMethod.DIRECT) {
+      // Use the direct auth service method
+      if (authService.hasValidAuth) {
+        return await authService.hasValidAuth();
+      }
+    } else {
+      // Use the Google Calendar service method
+      return authService.isAuthorized();
+    }
+    
+    return false;
+  }
+}
