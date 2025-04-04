@@ -90,7 +90,7 @@ export interface Calendar {
 
 export interface CalendarEventsList {
   items: CalendarEvent[];
-  nextPageToken?: string;
+  nextPageToken?: string | null;
 }
 
 export interface EventQuery {

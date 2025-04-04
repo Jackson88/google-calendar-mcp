@@ -47,19 +47,31 @@ cp .env.example .env
 Then edit the `.env` file with your configuration:
 
 ```
-# Authentication Method (google_cloud or direct)
-AUTH_METHOD=google_cloud
+# Authentication Method Configuration
+# -----------------------------
+# Two authentication methods are available:
+# 1. google_cloud - Uses Google Cloud OAuth (requires Google Cloud project setup)
+# 2. direct - Uses direct authentication (simpler, doesn't require Google Cloud project)
+
+# Choose one of the following authentication methods:
+# AUTH_METHOD=google_cloud
+AUTH_METHOD=direct
 
 # Server Configuration
+# -------------------
 PORT=3000
 NODE_ENV=development
 
-# Google Calendar API
+# Google Calendar API (required only if AUTH_METHOD=google_cloud)
+# --------------------------------------------------------------
+# These credentials require a Google Cloud Platform project with Google Calendar API enabled
+# You'll need to create OAuth credentials and configure the redirect URI in Google Cloud Console
 GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_CLIENT_SECRET=your_google_client_secret
 GOOGLE_REDIRECT_URI=http://localhost:3000/auth/callback
 
 # MCP Configuration
+# ----------------
 MCP_SERVER_ID=google-calendar-mcp
 MCP_SERVER_NAME=Google Calendar Integration
 MCP_SERVER_DESCRIPTION=Retrieves and manages Google Calendar events
@@ -194,30 +206,7 @@ These methods allow you to test the server functionality directly, even if Claud
 
 ### Configuring Claude Desktop Settings
 
-Claude Desktop needs to be configured to recognize and access your MCP server. You have two options:
-
-#### Option 1: Using Claude Desktop Settings UI
-
-1. **Open Claude Desktop Settings:**
-   - Click on the settings gear icon in Claude Desktop
-   - Navigate to the "Extensions" or "MCP" section (depending on your version)
-
-2. **Add MCP Configuration:**
-   - Click "Add MCP Server"
-   - Enter the following information:
-     - **Name**: Google Calendar MCP (or any name you prefer)
-     - **URL**: http://localhost:3000/mcp
-     - **Description**: (Optional) Google Calendar integration for Claude
-   - Click "Save" or "Add"
-
-3. **Verify Configuration:**
-   - The MCP server should now appear in your list of available MCP servers
-   - Ensure the status shows as available (may require the server to be running)
-
-
-#### Option 2: Direct Settings File Configuration (Advanced)
-
-For advanced users who prefer to directly configure the Claude Desktop settings file:
+Claude Desktop needs to be configured to recognize and access your MCP server:
 
 1. **Locate your Claude Desktop settings file:**
    - On macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
@@ -228,13 +217,22 @@ For advanced users who prefer to directly configure the Claude Desktop settings 
    - Find or create the `mcpServers` section
    - Add the following configuration (adjust as needed):
 
+
    ```json
-   "mcpServers": {
-     "google-calendar-mcp": {
-       "url": "http://localhost:3000/mcp",
-       "description": "Google Calendar Integration for Claude"
-     }
-   }
+{
+  "mcpServers": {
+    "google-calendar": {
+      "command": "npx",
+      "args": ["-y", "google-calendar-mcp"],
+      "env": {
+        "GOOGLE_CLIENT_ID": "<your-client-id>",
+        "GOOGLE_CLIENT_SECRET": "<your-client-secret>",
+        "GOOGLE_REDIRECT_URI": "http://localhost:3000/auth/callback"
+      },
+      "description": "Google Calendar MCP server using npx"
+    }
+  }
+}
    ```
 
 3. **Save the file and restart Claude Desktop**

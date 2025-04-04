@@ -36,7 +36,7 @@ export const env = {
   google: {
     clientId: getEnv('GOOGLE_CLIENT_ID', ''),
     clientSecret: getEnv('GOOGLE_CLIENT_SECRET', ''),
-    redirectUri: getEnv('GOOGLE_REDIRECT_URI', ''),
+    redirectUri: getEnv('GOOGLE_REDIRECT_URI', 'http://localhost:3000/auth/callback'),
     scopes: [
       'https://www.googleapis.com/auth/calendar',
       'https://www.googleapis.com/auth/calendar.events',
