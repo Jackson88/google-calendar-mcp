@@ -22,7 +22,7 @@ const getEnv = (key: string, defaultValue?: string): string => {
 export const env = {
   // Server configuration
   port: parseInt(getEnv('PORT', '3000'), 10),
-  nodeEnv: getEnv('NODE_ENV', 'development'),
+  nodeEnv: getEnv('NODE_ENV', 'production'),
   isProd: getEnv('NODE_ENV', 'development') === 'production',
   isDev: getEnv('NODE_ENV', 'development') === 'development',
   isTest: getEnv('NODE_ENV', 'development') === 'test',
